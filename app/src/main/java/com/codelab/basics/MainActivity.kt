@@ -12,6 +12,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -131,6 +133,44 @@ fun Greeting(name: String) {
 //        }
 //        /* END-6 */
 //    }
+    /* BEGIN-7 - State in Compose */
+    // Before getting into how to make a button clickable and how to resize an
+    // item, you need to store some value somewhere that indicates whether each
+    // item is expanded or not–the state of the item. Since we need to have one
+    // of these values per greeting, the logical place for it is in the Greeting
+    // composable.
+    // Setting a different value for the expanded variable won't make Compose
+    // detect it as a state change so nothing will happen.
+    // The reason why mutating this variable does not trigger recompositions is
+    // that it's not being tracked by Compose. Also, each time Greeting is
+    // called, the variable will be reset to false.
+//    var expanded = false // Don't do this!
+    // To add internal state to a composable, you can use the mutableStateOf
+    // function, which makes Compose recompose functions that read that State.
+    // However you can't just assign mutableStateOf to a variable inside a
+    // composable. As explained before, recomposition can happen at any time
+    // which would call the composable again, resetting the state to a new
+    // mutable state with a value of false.
+//    val expanded = mutableStateOf(false) // Don't do this!
+    // To preserve state across recompositions, remember the mutable state using
+    // remember.
+    // remember is used to guard against recomposition, so the state is not
+    // reset.
+    // Note that if you call the same composable from different parts of the
+    // screen you will create different UI elements, each with its own version
+    // of the state. You can think of internal state as a private variable in a
+    // class.
+    // The composable function will automatically be "subscribed" to the state.
+    // If the state changes, composables that read these fields will be
+    // recomposed to display the updates.
+    val expanded = remember { mutableStateOf(false) }
+    /* END-7 */
+
+    /* BEGIN-7.2 - Expanding the item */
+    // Add an additional variable that depends on our state.
+    val extraPadding = if (expanded.value) 48.dp else 0.dp
+    /* END-7.2 */
+
     Surface(
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
@@ -147,20 +187,38 @@ fun Greeting(name: String) {
             // pushing away the other elements that don't have a weight, which
             // are called inflexible. It also makes the fillMaxWidth modifier
             // redundant.
-            Column(modifier = Modifier.weight(1f)) {
+            /* BEGIN-7.2 - Expanding the item */
+            // Apply a new padding modifier to the Column.
+//            Column(modifier = Modifier.weight(1f)) {
+//                Text(text = "Hello, ")
+//                Text(text = name)
+//            }
+            Column(modifier = Modifier
+                .weight(1f)
+                .padding(bottom = extraPadding)
+            ) {
                 Text(text = "Hello, ")
                 Text(text = name)
             }
+            /* END-7.2 */
+
             // Compose provides different types of Button according to the
             // Material Design Buttons spec—Button, ElevatedButton,
             // FilledTonalButton, OutlinedButton, and TextButton. In your case,
             // you'll use an ElevatedButton that wraps a Text as the
             // ElevatedButton content.
+            /* BEGIN-7.1 - Mutating state and reacting to state changes */
+//            ElevatedButton(
+//                onClick = { } // You'll learn about this callback later
+//            ) {
+//                Text("Show more")
+//            }
             ElevatedButton(
-                onClick = { /* TODO */ }
+                onClick = { expanded.value = !expanded.value },
             ) {
-                Text("Show more")
+                Text(if (expanded.value) "Show less" else "Show more")
             }
+            /* END-7.1 */
         }
         /* BEGIN-6.2 */
     }
