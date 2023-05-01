@@ -3,17 +3,22 @@ package com.codelab.basics
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,21 +75,75 @@ class MainActivity : ComponentActivity() {
 //    }
 //}
 /* END-5 */
+/* BEGIN-8 - State hoisting */
+// In Composable functions, state that is read or modified by multiple functions
+// should live in a common ancestor—this process is called state hoisting. To
+// hoist means to lift or elevate.
+// Making state hoistable avoids duplicating state and introducing bugs, helps
+// reuse composables, and makes composables substantially easier to test.
+// Contrarily, state that doesn't need to be controlled by a composable's parent
+// should not be hoisted. The source of truth belongs to whoever creates and
+// controls that state.
+// Move the content of MyApp into a new composable called Greetings, and add the
+// logic to show the different screens in MyApp.
+//@Composable
+//fun MyApp(
+//    modifier: Modifier = Modifier,
+//    names: List<String> = listOf("World", "Compose")
+//) {
+//    // Modifiers can have overloads so, for example, you can specify different
+//    // ways to create a padding.
+//    // To add multiple modifiers to an element, you simply chain them.
+//    Column(modifier = modifier.padding(vertical = 4.dp)) {
+//        for (name in names) {
+//            Greeting(name = name)
+//        }
+//    }
+//}
+/* END-6.1 */
 @Composable
-fun MyApp(
+fun MyApp(modifier: Modifier = Modifier) {
+    // shouldShowOnboarding is using a by keyword instead of the =. This is a
+    // property delegate that saves you from typing .value every time.
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Surface(modifier) {
+        // In Compose you don't hide UI elements. Instead, you simply don't add
+        // them to the composition, so they're not added to the UI tree that
+        // Compose generates. You do this with simple conditional Kotlin logic.
+        if (shouldShowOnboarding) {
+            // Instead of letting OnboardingScreen mutate our state, it would be
+            // better to let it notify us when the user clicked on the Continue
+            // button.
+            OnboardingScreen(onContinueClicked = {
+                shouldShowOnboarding = false
+            })
+        } else {
+            Greetings()
+        }
+    }
+}
+
+@Composable
+private fun Greetings(
     modifier: Modifier = Modifier,
     names: List<String> = listOf("World", "Compose")
 ) {
-    // Modifiers can have overloads so, for example, you can specify different
-    // ways to create a padding.
-    // To add multiple modifiers to an element, you simply chain them.
     Column(modifier = modifier.padding(vertical = 4.dp)) {
         for (name in names) {
             Greeting(name = name)
         }
     }
 }
-/* END-6.1 */
+
+@Preview(showBackground = true, widthDp = 320)
+@Composable
+private fun GreetingsPreview() {
+    BasicsCodelabTheme {
+        Greetings()
+    }
+}
+/* END-8 */
 
 /* BEGIN-3.1 - Composable functions */
 // A composable function is a regular function annotated with @Composable. This
@@ -249,3 +308,38 @@ fun DefaultPreview() {
         /* END-5 */
     }
 }
+
+/* BEGIN-8 - State hoisting */
+// Create an onboarding screen.
+@Composable
+fun OnboardingScreen(
+    // Callback to pass event up. This makes the composable more reusable.
+    onContinueClicked: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    // Column can be configured to display its contents in the center of the
+    // screen
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Welcome to the Basics Codelab!")
+        Button(
+            modifier = Modifier.padding(vertical = 24.dp),
+            onClick = onContinueClicked
+        ) {
+            Text("Continue")
+        }
+    }
+}
+
+// You can have multiple previews at the same time
+@Preview(showBackground = true, widthDp = 320, heightDp = 320)
+@Composable
+fun OnboardingPreview() {
+    BasicsCodelabTheme {
+        OnboardingScreen(onContinueClicked = {}) // Do nothing on click.)
+    }
+}
+/* END-8 */
