@@ -3,6 +3,9 @@ package com.codelab.basics
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -270,8 +273,27 @@ fun Greeting(name: String) {
 
     /* BEGIN-7.2 - Expanding the item */
     // Add an additional variable that depends on our state.
-    val extraPadding = if (expanded.value) 48.dp else 0.dp
+    /* BEGIN-11 - Animating your list */
+//    val extraPadding = if (expanded.value) 48.dp else 0.dp
     /* END-7.2 */
+
+    // The animateDpAsState composable returns a State object whose value will
+    // continuously be updated by the animation until it finishes. It takes a
+    // "target value" whose type is Dp.
+    // animateDpAsState takes an optional animationSpec parameter that lets you
+    // customize the animation.
+    // Any animation created with animate*AsState is interruptible. This means
+    // that if the target value changes in the middle of the animation,
+    // animate*AsState restarts the animation and points to the new value.
+    // Interruptions look especially natural with spring-based animations.
+    val extraPadding by animateDpAsState(
+        if (expanded.value) 48.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
+    /* END-11 */
 
     Surface(
         color = MaterialTheme.colorScheme.primary,
@@ -295,14 +317,25 @@ fun Greeting(name: String) {
 //                Text(text = "Hello, ")
 //                Text(text = name)
 //            }
+            /* BEGIN-11 - Animating your list */
+            // Make sure that padding is never negative, otherwise it could
+            // crash the app.
+//            Column(modifier = Modifier
+//                .weight(1f)
+//                .padding(bottom = extraPadding)
+//            ) {
+//                Text(text = "Hello, ")
+//                Text(text = name)
+//            }
+            /* END-7.2 */
             Column(modifier = Modifier
                 .weight(1f)
-                .padding(bottom = extraPadding)
+                .padding(bottom = extraPadding.coerceAtLeast(0.dp))
             ) {
                 Text(text = "Hello, ")
                 Text(text = name)
             }
-            /* END-7.2 */
+            /* END-11 */
 
             // Compose provides different types of Button according to the
             // Material Design Buttons spec—Button, ElevatedButton,
