@@ -7,6 +7,11 @@ In this codelab you will go hands-on and learn the fundamentals of declarative
 UI and [Jetpack Compose](http://developer.android.com/jetpack/compose), working
 with state, layouts and theming.
 
+## References
+
+* [Compose Material Catalog](http://play.google.com/store/apps/details?id=androidx.compose.material.catalog)
+* [List of Compose Modifiers](http://developer.android.com/jetpack/compose/modifiers-list)
+
 ## License
 
 ```
