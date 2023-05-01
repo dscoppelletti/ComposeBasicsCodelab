@@ -37,6 +37,9 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+/* BEGIN-3.2 - Compose in an Android app */
+// BasicsCodelabTheme is a way to style Composable functions.
+/* END-3.2 */
 @Composable
 fun BasicsCodelabTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
