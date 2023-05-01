@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -124,17 +126,42 @@ fun MyApp(modifier: Modifier = Modifier) {
     }
 }
 
+/* BEGIN-9 - Creating a performant lazy list */
+// Change the default list value in the Greetings parameters to use another list
+// constructor which allows to set the list size and fill it with the value
+// contained in its lambda (here $it represents the list index).
+//@Composable
+//private fun Greetings(
+//    modifier: Modifier = Modifier,
+//    names: List<String> = listOf("World", "Compose")
+//) {
+//    Column(modifier = modifier.padding(vertical = 4.dp)) {
+//        for (name in names) {
+//            Greeting(name = name)
+//        }
+//    }
+//}
+
 @Composable
 private fun Greetings(
     modifier: Modifier = Modifier,
-    names: List<String> = listOf("World", "Compose")
+    names: List<String> = List(1000) { "$it" }
 ) {
-    Column(modifier = modifier.padding(vertical = 4.dp)) {
-        for (name in names) {
+    // To display a scrollable column we use a LazyColumn. LazyColumn renders
+    // only the visible items on screen, allowing performance gains when
+    // rendering a big list.
+    // In its basic usage, the LazyColumn API provides an items element within
+    // its scope, where individual item rendering logic is written.
+    // LazyColumn doesn't recycle its children like RecyclerView. It emits new
+    // Composables as you scroll through it and is still performant, as emitting
+    // Composables is relatively cheap compared to instantiating Android Views.
+    LazyColumn(modifier = modifier.padding(vertical = 4.dp)) {
+        items(items = names) { name ->
             Greeting(name = name)
         }
     }
 }
+/* END-9 */
 
 @Preview(showBackground = true, widthDp = 320)
 @Composable
