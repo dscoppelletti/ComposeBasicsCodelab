@@ -10,21 +10,40 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
+    /* BEGIN-12.2 - Tweak your app's theme */
+//    primary = Purple80,
+//    secondary = PurpleGrey80,
+//    tertiary = Pink80
+    surface = Blue,
+    onSurface = Navy,
+    primary = Navy,
+    onPrimary = Chartreuse
+    /* END-12.2 */
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    /* BEGIN-12.2 - Tweak your app's theme */
+    // If you go back to MainActivity.kt and refresh the preview, the preview
+    // colors don't actually change! That's because by default, your Preview
+    // will use dynamic colors. You can see the logic for adding dynamic
+    // coloring in Theme.kt, using the dynamicColor boolean parameter.
+    // To see the non-adaptive version of your color scheme, run your app on a
+    // device with API level lower than 31.
+//    primary = Purple40,
+//    secondary = PurpleGrey40,
+//    tertiary = Pink40
+    surface = Blue,
+    onSurface = Color.White,
+    primary = LightBlue,
+    onPrimary = Navy
+    /* END-12.2 */
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -65,6 +84,14 @@ fun BasicsCodelabTheme(
         }
     }
 
+    /* BEGIN-12 - Styling and theming your app */
+    // MaterialTheme is a composable function that reflects the styling
+    // principles from the Material design specification. That styling
+    // information cascades down to the components that are inside its content,
+    // which may read the information to style themselves.
+    // You didn't style any of the composables so far and yet you got a decent
+    // default, including dark mode support!
+    /* END-12 */
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

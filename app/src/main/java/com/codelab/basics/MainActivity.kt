@@ -1,5 +1,6 @@
 package com.codelab.basics
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,6 +27,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codelab.basics.ui.theme.BasicsCodelabTheme
@@ -41,15 +43,21 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             /* BEGIN-5 - Reusing composables */
-//                // A surface container using the 'background' color from the theme
-//                Surface(
-//                    modifier = Modifier.fillMaxSize(),
-//                    color = MaterialTheme.colorScheme.background
-//                ) {
-//                    Greeting("Android")
-//                }
-            MyApp(modifier = Modifier.fillMaxSize())
+//            // A surface container using the 'background' color from the theme
+//            Surface(
+//                modifier = Modifier.fillMaxSize(),
+//                color = MaterialTheme.colorScheme.background
+//            ) {
+//                Greeting("Android")
+//            }
+            /* BEGIN-12 - Restore the BasicsCodelabTheme theme that I mistakenly
+            removed at step 5 */
+//            MyApp(modifier = Modifier.fillMaxSize())
             /* END-5 */
+            BasicsCodelabTheme {
+                MyApp(modifier = Modifier.fillMaxSize())
+            }
+            /* END-12 */
         }
     }
 }
@@ -182,6 +190,16 @@ private fun Greetings(
 }
 /* END-9 */
 
+/* BEGIN-12.1 - Set up a dark mode preview */
+// Add an additional @Preview annotation to GreetingsPreview with
+// UI_MODE_NIGHT_YES.
+@Preview(
+    showBackground = true,
+    widthDp = 320,
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "Dark"
+)
+/* END-12.1 */
 @Preview(showBackground = true, widthDp = 320)
 @Composable
 private fun GreetingsPreview() {
@@ -333,7 +351,29 @@ fun Greeting(name: String) {
                 .padding(bottom = extraPadding.coerceAtLeast(0.dp))
             ) {
                 Text(text = "Hello, ")
-                Text(text = name)
+                /* BEGIN-12 - Styling and theming your app */
+                // Because BasicsCodelabTheme wraps MaterialTheme internally,
+                // MyApp is styled with the properties defined in the theme.
+                // From any descendant composable you can retrieve three
+                // properties of MaterialTheme: colorScheme, typography and
+                // shapes.
+                // In general it's much better to keep your colors, shapes and
+                // font styles inside a MaterialTheme. For example, dark mode
+                // would be hard to implement if you hard-code colors and it
+                // would require a lot of error-prone work to fix.
+                // However sometimes you need to deviate slightly from the
+                // selection of colors and font styles. In those situations it's
+                // better to base your color or style on an existing one.
+                // For this, you can modify a predefined style by using the copy
+                // function.
+//                Text(text = name)
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.headlineMedium.copy(
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                )
+                /* END-12 */
             }
             /* END-11 */
 
