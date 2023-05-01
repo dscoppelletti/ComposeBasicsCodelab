@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,7 +108,22 @@ class MainActivity : ComponentActivity() {
 fun MyApp(modifier: Modifier = Modifier) {
     // shouldShowOnboarding is using a by keyword instead of the =. This is a
     // property delegate that saves you from typing .value every time.
-    var shouldShowOnboarding by remember { mutableStateOf(true) }
+    /* BEGIN-10 - Persisting state */
+    // If you run the app on a device, click on the buttons and then you rotate,
+    // the onboarding screen is shown again. The remember function works only as
+    // long as the composable is kept in the Composition. When you rotate, the
+    // whole activity is restarted so all state is lost. This also happens with
+    // any configuration change and on process death.
+    // Instead of using remember you can use rememberSaveable. This will save
+    // each state surviving configuration changes (such as rotations) and
+    // process death.
+    // ndr - The rememberSaveable delegate makes the shouldShowOnboarding state
+    // persist after a configuration change, and after a switch
+    // background-foreground, but not after an explicit stop and restart of the
+    // App.
+//    var shouldShowOnboarding by remember { mutableStateOf(true) }
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
+    /* END-10 */
 
     Surface(modifier) {
         // In Compose you don't hide UI elements. Instead, you simply don't add
