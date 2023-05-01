@@ -3,8 +3,11 @@ package com.codelab.basics
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,16 +52,37 @@ class MainActivity : ComponentActivity() {
 // composable you call inside your function. This way, the calling site can
 // adapt layout instructions and behaviors from outside of your composable
 // function.
+/* BEGIN-6.1 - Compose and Kotlin */
+// Composable functions can be used like any other function in Kotlin. This
+// makes building UIs really powerful since you can add statements to influence
+// how the UI will be displayed.
+// You can use a for loop to add elements to the Column.
+// Modifiers are used extensively in Compose.
+//@Composable
+//private fun MyApp(modifier: Modifier = Modifier) {
+//    Surface(
+//        modifier = modifier,
+//        color = MaterialTheme.colorScheme.background
+//    ) {
+//        Greeting("Android")
+//    }
+//}
+/* END-5 */
 @Composable
-private fun MyApp(modifier: Modifier = Modifier) {
-    Surface(
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.background
-    ) {
-        Greeting("Android")
+fun MyApp(
+    modifier: Modifier = Modifier,
+    names: List<String> = listOf("World", "Compose")
+) {
+    // Modifiers can have overloads so, for example, you can specify different
+    // ways to create a padding.
+    // To add multiple modifiers to an element, you simply chain them.
+    Column(modifier = modifier.padding(vertical = 4.dp)) {
+        for (name in names) {
+            Greeting(name = name)
+        }
     }
 }
-/* END-5 */
+/* END-6.1 */
 
 /* BEGIN-3.1 - Composable functions */
 // A composable function is a regular function annotated with @Composable. This
@@ -83,17 +107,64 @@ fun Greeting(name: String) {
     // Surface understands that, when the background is set to the primary
     // color, any text on top of it should use the onPrimary color, which is
     // also defined in the theme.
-    Surface(color = MaterialTheme.colorScheme.primary) {
-        /* BEGIN-4.1 - Modifiers */
-        // Text(text = "Hello $name!")
-        // Most Compose UI elements such as Surface and Text accept an optional
-        // modifier parameter. Modifiers tell a UI element how to lay out,
-        // display, or behave within its parent layout.
-        // The padding modifier will apply an amount of space around the element
-        // it decorates.
-        Text(text = "Hello $name!", modifier = Modifier.padding(24.dp))
-        /* END-4.1 */
+    /* BEGIN-6.1 - Compose and Kotlin */
+//    Surface(color = MaterialTheme.colorScheme.primary) {
+//        /* BEGIN-4.1 - Modifiers */
+//        // Text(text = "Hello $name!")
+//        // Most Compose UI elements such as Surface and Text accept an optional
+//        // modifier parameter. Modifiers tell a UI element how to lay out,
+//        // display, or behave within its parent layout.
+//        // The padding modifier will apply an amount of space around the element
+//        // it decorates.
+//        /* BEGIN-6 - Creating columns and rows */
+//        // The three basic standard layout elements in Compose are Column, Row
+//        // and Box.
+//        // They are Composable functions that take Composable content, so you
+//        // can place items inside. For example, each child inside of a Column
+//        // will be placed vertically.
+//        // Change Greeting so that it shows a column with two text elements.
+//        Text(text = "Hello $name!", modifier = Modifier.padding(24.dp))
+//        /* END-4.1 */
+//        Column(modifier = Modifier.padding(24.dp)) {
+//            Text(text = "Hello,")
+//            Text(text = name)
+//        }
+//        /* END-6 */
+//    }
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+    ) {
+        /* BEGIN-6.2 - Adding a button */
+//        Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
+//            Text(text = "Hello, ")
+//            Text(text = name)
+//        }
+        Row(modifier = Modifier.padding(24.dp)) {
+            // There's no alignEnd modifier so, instead, you give some weight to
+            // the composable at the start. The weight modifier makes the
+            // element fill all available space, making it flexible, effectively
+            // pushing away the other elements that don't have a weight, which
+            // are called inflexible. It also makes the fillMaxWidth modifier
+            // redundant.
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = "Hello, ")
+                Text(text = name)
+            }
+            // Compose provides different types of Button according to the
+            // Material Design Buttons spec—Button, ElevatedButton,
+            // FilledTonalButton, OutlinedButton, and TextButton. In your case,
+            // you'll use an ElevatedButton that wraps a Text as the
+            // ElevatedButton content.
+            ElevatedButton(
+                onClick = { /* TODO */ }
+            ) {
+                Text("Show more")
+            }
+        }
+        /* BEGIN-6.2 */
     }
+    /* END-6.1 */
     /* END-4 */
 }
 
@@ -103,7 +174,14 @@ fun Greeting(name: String) {
 // annotation and build your project.
 // You can have multiple previews in the same file and give them names.
 /* END-3.2 */
-@Preview(showBackground = true)
+/* BEGIN-6.1 - Compose and Kotlin */
+// You haven't set dimensions or added any constraints to the size of your
+// composables yet, so each row takes the minimum space it can and the preview
+// does the same thing. Let's change our preview to emulate a common width of a
+// small phone, 320dp. Add a widthDp parameter to the @Preview annotation.
+//@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 320)
+/* END-6.1 */
 @Composable
 fun DefaultPreview() {
     BasicsCodelabTheme {
