@@ -4,8 +4,8 @@ import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,8 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,6 +33,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -286,8 +293,10 @@ fun Greeting(name: String) {
     // The composable function will automatically be "subscribed" to the state.
     // If the state changes, composables that read these fields will be
     // recomposed to display the updates.
-    val expanded = remember { mutableStateOf(false) }
+    /* BEGIN-13.3-4 - Showing more, Add elevation and shapes */
+//    val expanded = remember { mutableStateOf(false) }
     /* END-7 */
+    /* END-13.3-4 */
 
     /* BEGIN-7.2 - Expanding the item */
     // Add an additional variable that depends on our state.
@@ -304,102 +313,171 @@ fun Greeting(name: String) {
     // that if the target value changes in the middle of the animation,
     // animate*AsState restarts the animation and points to the new value.
     // Interruptions look especially natural with spring-based animations.
-    val extraPadding by animateDpAsState(
-        if (expanded.value) 48.dp else 0.dp,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        )
-    )
-    /* END-11 */
-
-    Surface(
-        color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
-    ) {
-        /* BEGIN-6.2 - Adding a button */
-//        Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
-//            Text(text = "Hello, ")
-//            Text(text = name)
+    /* BEGIN-13.3-4 - Showing more, Add elevation and shapes */
+//    val extraPadding by animateDpAsState(
+//        if (expanded.value) 48.dp else 0.dp,
+//        animationSpec = spring(
+//            dampingRatio = Spring.DampingRatioMediumBouncy,
+//            stiffness = Spring.StiffnessLow
+//        )
+//    )
+//    /* END-11 */
+//
+//    Surface(
+//        color = MaterialTheme.colorScheme.primary,
+//        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+//    ) {
+//        /* BEGIN-6.2 - Adding a button */
+////        Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
+////            Text(text = "Hello, ")
+////            Text(text = name)
+////        }
+//        Row(modifier = Modifier.padding(24.dp)) {
+//            // There's no alignEnd modifier so, instead, you give some weight to
+//            // the composable at the start. The weight modifier makes the
+//            // element fill all available space, making it flexible, effectively
+//            // pushing away the other elements that don't have a weight, which
+//            // are called inflexible. It also makes the fillMaxWidth modifier
+//            // redundant.
+//            /* BEGIN-7.2 - Expanding the item */
+//            // Apply a new padding modifier to the Column.
+////            Column(modifier = Modifier.weight(1f)) {
+////                Text(text = "Hello, ")
+////                Text(text = name)
+////            }
+//            /* BEGIN-11 - Animating your list */
+//            // Make sure that padding is never negative, otherwise it could
+//            // crash the app.
+////            Column(modifier = Modifier
+////                .weight(1f)
+////                .padding(bottom = extraPadding)
+////            ) {
+////                Text(text = "Hello, ")
+////                Text(text = name)
+////            }
+//            /* END-7.2 */
+//            Column(modifier = Modifier.weight(1f)
+//                .padding(bottom = extraPadding.coerceAtLeast(0.dp))) {
+//                Text(text = "Hello, ")
+//                /* BEGIN-12 - Styling and theming your app */
+//                // Because BasicsCodelabTheme wraps MaterialTheme internally,
+//                // MyApp is styled with the properties defined in the theme.
+//                // From any descendant composable you can retrieve three
+//                // properties of MaterialTheme: colorScheme, typography and
+//                // shapes.
+//                // In general it's much better to keep your colors, shapes and
+//                // font styles inside a MaterialTheme. For example, dark mode
+//                // would be hard to implement if you hard-code colors and it
+//                // would require a lot of error-prone work to fix.
+//                // However sometimes you need to deviate slightly from the
+//                // selection of colors and font styles. In those situations it's
+//                // better to base your color or style on an existing one.
+//                // For this, you can modify a predefined style by using the copy
+//                // function.
+////                Text(text = name)
+//                Text(
+//                    text = name,
+//                    style = MaterialTheme.typography.headlineMedium.copy(
+//                        fontWeight = FontWeight.ExtraBold
+//                    )
+//                )
+//                /* END-12 */
+//            }
+//            /* END-11 */
+//
+//            // Compose provides different types of Button according to the
+//            // Material Design Buttons spec—Button, ElevatedButton,
+//            // FilledTonalButton, OutlinedButton, and TextButton. In your case,
+//            // you'll use an ElevatedButton that wraps a Text as the
+//            // ElevatedButton content.
+//            /* BEGIN-7.1 - Mutating state and reacting to state changes */
+////            ElevatedButton(
+////                onClick = { } // You'll learn about this callback later
+////            ) {
+////                Text("Show more")
+////            }
+//            /* BEGIN-13.1 - Replace button with an icon */
+////            ElevatedButton(
+////                onClick = { expanded.value = !expanded.value },
+////            ) {
+////                Text(if (expanded.value) "Show less" else "Show more")
+////            }
+//            /* END-7.1 */
+//            IconButton(onClick = { expanded.value = !expanded.value }) {
+//                Icon(
+//                    imageVector = if (expanded.value) Icons.Filled.ExpandLess
+//                    else Icons.Filled.ExpandMore,
+//                    contentDescription = if (expanded.value) {
+//                        stringResource(R.string.show_less)
+//                    } else {
+//                        stringResource(R.string.show_more)
+//                    }
+//                )
+//            }
+//            /* END-13.1 */
 //        }
-        Row(modifier = Modifier.padding(24.dp)) {
-            // There's no alignEnd modifier so, instead, you give some weight to
-            // the composable at the start. The weight modifier makes the
-            // element fill all available space, making it flexible, effectively
-            // pushing away the other elements that don't have a weight, which
-            // are called inflexible. It also makes the fillMaxWidth modifier
-            // redundant.
-            /* BEGIN-7.2 - Expanding the item */
-            // Apply a new padding modifier to the Column.
-//            Column(modifier = Modifier.weight(1f)) {
-//                Text(text = "Hello, ")
-//                Text(text = name)
-//            }
-            /* BEGIN-11 - Animating your list */
-            // Make sure that padding is never negative, otherwise it could
-            // crash the app.
-//            Column(modifier = Modifier
-//                .weight(1f)
-//                .padding(bottom = extraPadding)
-//            ) {
-//                Text(text = "Hello, ")
-//                Text(text = name)
-//            }
-            /* END-7.2 */
-            Column(modifier = Modifier
-                .weight(1f)
-                .padding(bottom = extraPadding.coerceAtLeast(0.dp))
-            ) {
-                Text(text = "Hello, ")
-                /* BEGIN-12 - Styling and theming your app */
-                // Because BasicsCodelabTheme wraps MaterialTheme internally,
-                // MyApp is styled with the properties defined in the theme.
-                // From any descendant composable you can retrieve three
-                // properties of MaterialTheme: colorScheme, typography and
-                // shapes.
-                // In general it's much better to keep your colors, shapes and
-                // font styles inside a MaterialTheme. For example, dark mode
-                // would be hard to implement if you hard-code colors and it
-                // would require a lot of error-prone work to fix.
-                // However sometimes you need to deviate slightly from the
-                // selection of colors and font styles. In those situations it's
-                // better to base your color or style on an existing one.
-                // For this, you can modify a predefined style by using the copy
-                // function.
-//                Text(text = name)
-                Text(
-                    text = name,
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                )
-                /* END-12 */
-            }
-            /* END-11 */
-
-            // Compose provides different types of Button according to the
-            // Material Design Buttons spec—Button, ElevatedButton,
-            // FilledTonalButton, OutlinedButton, and TextButton. In your case,
-            // you'll use an ElevatedButton that wraps a Text as the
-            // ElevatedButton content.
-            /* BEGIN-7.1 - Mutating state and reacting to state changes */
-//            ElevatedButton(
-//                onClick = { } // You'll learn about this callback later
-//            ) {
-//                Text("Show more")
-//            }
-            ElevatedButton(
-                onClick = { expanded.value = !expanded.value },
-            ) {
-                Text(if (expanded.value) "Show less" else "Show more")
-            }
-            /* END-7.1 */
-        }
-        /* BEGIN-6.2 */
-    }
+//        /* BEGIN-6.2 */
+//    }
     /* END-6.1 */
     /* END-4 */
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ),
+        modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+    ) {
+        CardContent(name)
+    }
+    /* END-13.3-4 */
 }
+
+/* BEGIN-13.3-4 - Showing more, Add elevation and shapes */
+@Composable
+private fun CardContent(name: String) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = Modifier
+            .padding(12.dp)
+            .animateContentSize(
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(12.dp)
+        ) {
+            Text(text = "Hello, ")
+            Text(
+                text = name, style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.ExtraBold
+                )
+            )
+            if (expanded) {
+                Text(
+                    text = ("Composem ipsum color sit lazy, " +
+                            "padding theme elit, sed do bouncy. ").repeat(4),
+                )
+            }
+        }
+        IconButton(onClick = { expanded = !expanded }) {
+            Icon(
+                imageVector = if (expanded) Icons.Filled.ExpandLess else
+                    Icons.Filled.ExpandMore,
+                contentDescription = if (expanded) {
+                    stringResource(R.string.show_less)
+                } else {
+                    stringResource(R.string.show_more)
+                }
+            )
+        }
+    }
+}
+/* END-13.3-4 */
 
 /* BEGIN-3.2 - Compose in an Android app */
 // To use the Android Studio preview, you just have to mark any parameterless
